@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moon Landing</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="dashboard">
+      <div class="stat">Altitude: <span id="altitude">0</span>m</div>
+      <div class="stat">Horizontal Speed: <span id="hSpeed">0</span>m/s</div>
+      <div class="stat">Vertical Speed: <span id="vSpeed">0</span>m/s</div>
+      <div class="stat">Fuel: <span id="fuel">100</span>%</div>
+      <div class="stat">Time: <span id="time">0</span>s</div>
+    </div>
+    <div id="modal" class="modal hidden">
+      <div class="modal-content">
+        <h2 id="modal-title"></h2>
+        <p id="modal-message"></p>
+        <button id="tryAgain">Try Again</button>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
