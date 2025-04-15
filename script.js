@@ -1,17 +1,17 @@
 // Game constants
-const MOON_RADIUS = 400; // meters
+const MOON_RADIUS = 350; // meters
 const MOON_GRAVITY = 1.62; // m/s²
-const MOON_BUMPINESS = 0.025; // bumpiness of the moon surface
-const MOON_SEGMENTS = 280; // how many line segments to draw the moon
+const MOON_BUMPINESS = 0.015; // bumpiness of the moon surface
+const MOON_SEGMENTS = 250; // how many line segments to draw the moon
 const MOON_ROTATION_SPEED = 0.02; // rotations per minute
 const SPACECRAFT_HEIGHT = 8; // meters
 const LANDING_ZONE_SPREAD = 5; // segments
 const THRUST_FORCE = 4; // m/s²
-const FUEL_CONSUMPTION = 1.5; // %/s
+const FUEL_CONSUMPTION = 4; // %/s
 const ROTATION_SPEED = 35; // degrees/s
 const ACCEPTABLE_LANDING_ANGLE = 4; // degrees
 const ACCEPTABLE_LANDING_SPEED = 2.5; // m/s
-const NUM_STARS = 200; // number of stars in the background
+const NUM_STARS = 150; // number of stars in the background
 
 // Game messages
 const MESSAGES = {
@@ -41,7 +41,7 @@ const MESSAGES = {
   ],
   tooFast: [
     "Whoa there! You're going faster than a meteor!",
-    "Speed limit: 2.5 m/s. You just broke it!",
+    `Speed limit: ${ACCEPTABLE_LANDING_SPEED} m/s. You just broke it!`,
     "Your spacecraft is in freefall, not flying!",
     "That's not flying, that's falling with style!",
     "Speed kills, especially on the moon!",
@@ -81,8 +81,8 @@ class Game {
       .map(() => ({
         x: Math.random() * this.canvas.width,
         y: Math.random() * this.canvas.height * 0.8, // Keep stars above the moon
-        size: Math.random() * 2 + 1,
-        brightness: Math.random() * 0.5 + 0.5,
+        size: Math.random() * 2 + 0.5,
+        brightness: Math.random() * 0.8 + 0.2,
       }));
 
     // Input handling
@@ -318,8 +318,7 @@ class Game {
     if (!collision) return;
 
     // We have a collision, check landing conditions
-    const isInLandingZone =
-      Math.abs(closestSegmentIndex - this.landingZoneIndex) <= 1;
+    const isInLandingZone = closestSegmentIndex === this.landingZoneIndex;
     const speed = Math.sqrt(
       this.spacecraft.velocityX * this.spacecraft.velocityX +
         this.spacecraft.velocityY * this.spacecraft.velocityY
@@ -409,15 +408,14 @@ class Game {
   }
 
   updateDashboard() {
-    const altitude = (
-      (this.moonCenter.y - this.spacecraft.y) /
-      this.scale
-    ).toFixed(1);
-    const vSpeed = this.spacecraft.velocityY.toFixed(1);
-    const hSpeed = this.spacecraft.velocityX.toFixed(1);
-    const rotation = this.spacecraft.rotation.toFixed(1);
-    const fuel = this.spacecraft.fuel.toFixed(0);
-    const time = ((Date.now() - this.startTime) / 1000).toFixed(1);
+    const altitude = Math.round(
+      (this.moonCenter.y - this.spacecraft.y - this.moonRadius) / this.scale
+    );
+    const vSpeed = Math.round(this.spacecraft.velocityY);
+    const hSpeed = Math.round(this.spacecraft.velocityX);
+    const rotation = Math.round(this.spacecraft.rotation);
+    const fuel = Math.round(this.spacecraft.fuel);
+    const time = Math.round((Date.now() - this.startTime) / 1000);
 
     document.getElementById("altitude").textContent = altitude;
     document.getElementById("vSpeed").textContent = vSpeed;
@@ -508,7 +506,7 @@ class Game {
     this.ctx.moveTo(p1.x, p1.y);
     this.ctx.lineTo(p2.x, p2.y);
     this.ctx.strokeStyle = "lime";
-    this.ctx.lineWidth = 3;
+    this.ctx.lineWidth = 5;
     this.ctx.stroke();
 
     // Draw spacecraft
@@ -536,12 +534,19 @@ class Game {
     this.ctx.stroke();
 
     // Draw thrust if firing
-    if (this.keys.ArrowUp && this.spacecraft.fuel > 0) {
+    if (
+      this.keys.ArrowUp &&
+      this.spacecraft.fuel > 0 &&
+      this.isGameActive &&
+      !this.isPaused
+    ) {
       this.ctx.beginPath();
+      const length = Math.random() * 0.2 + 0.8;
       this.ctx.moveTo(0, SPACECRAFT_HEIGHT * this.scale * 0.2);
-      this.ctx.lineTo(-5, SPACECRAFT_HEIGHT * this.scale * 1.0);
-      this.ctx.lineTo(5, SPACECRAFT_HEIGHT * this.scale * 1.0);
+      this.ctx.lineTo(-5, SPACECRAFT_HEIGHT * this.scale * length);
+      this.ctx.lineTo(5, SPACECRAFT_HEIGHT * this.scale * length);
       this.ctx.closePath();
+
       this.ctx.fillStyle = "orange";
       this.ctx.fill();
     }

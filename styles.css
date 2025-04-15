@@ -1,8 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Orbitron:wght@400..900&display=swap");
+
+* {
+  font-family: "Orbitron";
+  font-weight: 800;
+}
+
 body {
   margin: 0;
   overflow: hidden;
   background: black;
-  font-family: monospace;
 }
 
 #gameCanvas {
@@ -17,17 +23,23 @@ body {
   position: fixed;
   top: 20px;
   left: 20px;
-  color: lime;
+  color: #aaa;
   background: rgba(0, 0, 0, 0.7);
   padding: 15px;
   border: 1px solid currentColor;
   border-radius: 5px;
   font-size: 14px;
-  min-width: 230px;
+  min-width: 150px;
+  box-shadow: 0 0 30px #000;
 }
 
 #dashboard div {
   margin: 5px 0;
+  display: flex;
+}
+
+#dashboard div span {
+  margin-left: auto;
 }
 
 .modal {
@@ -36,9 +48,10 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background: #000a;
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
   text-align: center;
+  box-shadow: 0 0 30px #000;
 }
 
 .modal button {
@@ -56,6 +69,7 @@ body {
 
 .modal-content {
   font-size: 18px;
+  text-wrap-style: balance;
 }
 
 #modal.success {
@@ -74,7 +88,6 @@ body {
   color: inherit;
   padding: 10px 20px;
   cursor: pointer;
-  font-family: monospace;
   margin-top: 15px;
   font-size: 16px;
 }
@@ -91,6 +104,5 @@ body {
   align-items: center;
   background: #000a;
   color: white;
-  font-size: 72px;
-  font-family: monospace;
+  font-size: 100px;
 }
