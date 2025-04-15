@@ -8,7 +8,7 @@ const SPACECRAFT_HEIGHT = 6; // meters
 const LANDING_ZONE_SPREAD = 5; // segments
 const THRUST_FORCE = 4; // m/s²
 const FUEL_CONSUMPTION = 1; // %/s
-const ROTATION_SPEED = 20; // degrees/s
+const ROTATION_SPEED = 30; // degrees/s
 const ACCEPTABLE_LANDING_ANGLE = 4; // degrees
 const ACCEPTABLE_LANDING_SPEED = 2.5; // m/s
 
@@ -143,7 +143,8 @@ class Game {
     const countdownText = document.getElementById("countdown-text");
     countdown.classList.remove("hidden");
     countdownText.textContent = count;
-    this.isPaused = true; // Ensure physics is paused during countdown
+    this.isPaused = true;
+    this.reset();
 
     const timer = setInterval(() => {
       count--;
@@ -154,8 +155,7 @@ class Game {
       } else {
         clearInterval(timer);
         countdown.classList.add("hidden");
-        this.isPaused = false; // Start physics after countdown
-        this.reset();
+        this.isPaused = false;
       }
     }, 1000);
   }
@@ -355,7 +355,6 @@ class Game {
   }
 
   endGame(success, reason = "") {
-    console.log("Game ended:", success, reason);
     this.isGameActive = false;
     const modal = document.getElementById("modal");
     const modalText = document.getElementById("modal-text");
