@@ -3,7 +3,7 @@ const MOON_RADIUS = 400; // meters
 const MOON_GRAVITY = 1.62; // m/s²
 const MOON_BUMPINESS = 0.025; // bumpiness of the moon surface
 const MOON_SEGMENTS = 280; // how many line segments to draw the moon
-const MOON_ROTATION_SPEED = 0.02 / 60; // rotations per second
+const MOON_ROTATION_SPEED = 0.02; // rotations per minute
 const SPACECRAFT_HEIGHT = 8; // meters
 const LANDING_ZONE_SPREAD = 5; // segments
 const THRUST_FORCE = 4; // m/s²
@@ -55,6 +55,10 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
     this.resizeCanvas();
     window.addEventListener("resize", () => this.resizeCanvas());
+
+    // Load moon texture
+    this.moonTexture = new Image();
+    this.moonTexture.src = "moon.jpeg";
 
     // Game state
     this.isGameActive = false;
@@ -192,6 +196,7 @@ class Game {
       velocityY: 0,
       fuel: 100,
     };
+    this.moonRotationOffset = Math.PI * Math.random();
     this.generateMoon();
   }
 
@@ -199,7 +204,7 @@ class Game {
     if (!this.isGameActive || this.isPaused) return; // Don't update if paused
 
     const dt = 1 / 60; // Fixed time step
-    this.moonRotation += MOON_ROTATION_SPEED * dt * Math.PI * 2;
+    this.moonRotation += (MOON_ROTATION_SPEED / 60) * dt * Math.PI * 2;
 
     // Update spacecraft physics
     if (this.keys.ArrowLeft) {
@@ -449,17 +454,52 @@ class Game {
     }
     this.ctx.globalAlpha = 1;
 
-    // Draw moon
+    // Draw moon with texture
+    this.ctx.save();
+    this.ctx.translate(this.moonCenter.x, this.moonCenter.y);
+    this.ctx.rotate(this.moonRotation);
+
+    // Create clipping path for the moon using the actual moon points
     this.ctx.beginPath();
+    const unrotatedPoints = this.moonPoints.map((point) => ({
+      x: point.x - this.moonCenter.x,
+      y: point.y - this.moonCenter.y,
+    }));
+    this.ctx.moveTo(unrotatedPoints[0].x, unrotatedPoints[0].y);
+    for (let i = 1; i < unrotatedPoints.length; i++) {
+      this.ctx.lineTo(unrotatedPoints[i].x, unrotatedPoints[i].y);
+    }
+    this.ctx.closePath();
+    this.ctx.clip();
+
+    // Draw the moon texture with additional rotation offset
+    const textureSize = this.moonRadius * 2.03;
+    this.ctx.save();
+    this.ctx.rotate(this.moonRotationOffset); // Apply the additional rotation only to the texture
+    this.ctx.drawImage(
+      this.moonTexture,
+      -textureSize / 2,
+      -textureSize / 2,
+      textureSize,
+      textureSize
+    );
+    this.ctx.restore();
+    this.ctx.restore();
+
+    // Draw moon surface line segments
     const rotatedPoints = this.moonPoints.map((point) =>
       this.rotatePoint(point, this.moonCenter, this.moonRotation)
     );
+
+    this.ctx.beginPath();
     this.ctx.moveTo(rotatedPoints[0].x, rotatedPoints[0].y);
-    for (const point of rotatedPoints) {
-      this.ctx.lineTo(point.x, point.y);
+    for (let i = 1; i < rotatedPoints.length; i++) {
+      this.ctx.lineTo(rotatedPoints[i].x, rotatedPoints[i].y);
     }
-    this.ctx.fillStyle = "#666";
-    this.ctx.fill();
+    this.ctx.closePath();
+    this.ctx.strokeStyle = "#fff4";
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
 
     // Draw landing zone
     const p1 = rotatedPoints[this.landingZoneIndex];
