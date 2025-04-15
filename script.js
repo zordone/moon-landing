@@ -11,6 +11,7 @@ const FUEL_CONSUMPTION = 1.5; // %/s
 const ROTATION_SPEED = 35; // degrees/s
 const ACCEPTABLE_LANDING_ANGLE = 4; // degrees
 const ACCEPTABLE_LANDING_SPEED = 2.5; // m/s
+const NUM_STARS = 200; // number of stars in the background
 
 // Game messages
 const MESSAGES = {
@@ -70,6 +71,16 @@ class Game {
       fuel: 100,
     };
 
+    // Generate stars
+    this.stars = Array(NUM_STARS)
+      .fill()
+      .map(() => ({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height * 0.8, // Keep stars above the moon
+        size: Math.random() * 2 + 1,
+        brightness: Math.random() * 0.5 + 0.5,
+      }));
+
     // Input handling
     this.keys = {
       ArrowLeft: false,
@@ -87,6 +98,16 @@ class Game {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
     this.scale = Math.min(this.canvas.width, this.canvas.height) / 200;
+
+    // Regenerate stars for new canvas size
+    this.stars = Array(NUM_STARS)
+      .fill()
+      .map(() => ({
+        x: Math.random() * this.canvas.width,
+        y: Math.random() * this.canvas.height * 0.8,
+        size: Math.random() * 2 + 1,
+        brightness: Math.random() * 0.5 + 0.5,
+      }));
   }
 
   setupEventListeners() {
@@ -417,6 +438,16 @@ class Game {
   draw() {
     this.ctx.fillStyle = "black";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Draw stars
+    this.ctx.fillStyle = "white";
+    for (const star of this.stars) {
+      this.ctx.globalAlpha = star.brightness;
+      this.ctx.beginPath();
+      this.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+      this.ctx.fill();
+    }
+    this.ctx.globalAlpha = 1;
 
     // Draw moon
     this.ctx.beginPath();
