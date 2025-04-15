@@ -22,6 +22,9 @@ const MESSAGES = {
     "You nailed it! Time to plant that flag!",
     "Congratulations! You just made Neil Armstrong proud!",
     "Lunar landing successful! Now, where's the moon cheese?",
+    "You landed like a pro! Time to collect moon rocks!",
+    "You just pulled off the ultimate moon landing!",
+    "You landed so well, the moon is jealous!",
   ],
   missedZone: [
     "Navigation error: That's not the landing zone!",
@@ -30,6 +33,9 @@ const MESSAGES = {
     "Houston, we have a navigation problem.",
     "You missed the landing zone by a mile!",
     "Your landing zone was more of a suggestion.",
+    "You landed in the wrong neighborhood!",
+    "You might want to recalibrate your landing coordinates.",
+    "You just discovered a new crater!",
   ],
   notUpright: [
     "Houston, we have a problem: you're not upright!",
@@ -38,6 +44,9 @@ const MESSAGES = {
     "Do a barrel roll! ...Actually, don't.",
     "Astronauts prefer their spacecraft right-side up.",
     "You're a bit tilted. The spacecraft shouldn't be!",
+    "You landed like a pancake!",
+    "Your spacecraft is doing the moonwalk, but not in a good way.",
+    "You landed like a drunk astronaut!",
   ],
   tooFast: [
     "Whoa there! You're going faster than a meteor!",
@@ -46,6 +55,9 @@ const MESSAGES = {
     "That's not flying, that's falling with style!",
     "Speed kills, especially on the moon!",
     "Slow and steady wins the space race.",
+    "You just set a new record for the fastest moon crash!",
+    "Your spacecraft is not a rocket sled!",
+    "Your spacecraft is not a meteor!",
   ],
 };
 
