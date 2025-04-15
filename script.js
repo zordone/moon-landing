@@ -1,14 +1,14 @@
 // Game constants
 const MOON_RADIUS = 400; // meters
 const MOON_GRAVITY = 1.62; // m/s²
-const MOON_BUMPINESS = 0.03; // Adjust this value to change the bumpiness of the moon surface
-const MOON_SEGMENTS = 250;
+const MOON_BUMPINESS = 0.025; // bumpiness of the moon surface
+const MOON_SEGMENTS = 280; // how many line segments to draw the moon
 const MOON_ROTATION_SPEED = 0.02 / 60; // rotations per second
-const SPACECRAFT_HEIGHT = 6; // meters
+const SPACECRAFT_HEIGHT = 8; // meters
 const LANDING_ZONE_SPREAD = 5; // segments
 const THRUST_FORCE = 4; // m/s²
-const FUEL_CONSUMPTION = 1; // %/s
-const ROTATION_SPEED = 30; // degrees/s
+const FUEL_CONSUMPTION = 1.5; // %/s
+const ROTATION_SPEED = 35; // degrees/s
 const ACCEPTABLE_LANDING_ANGLE = 4; // degrees
 const ACCEPTABLE_LANDING_SPEED = 2.5; // m/s
 
@@ -367,36 +367,6 @@ class Game {
     return t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1;
   }
 
-  distanceToLineSegment(px, py, x1, y1, x2, y2) {
-    const A = px - x1;
-    const B = py - y1;
-    const C = x2 - x1;
-    const D = y2 - y1;
-
-    const dot = A * C + B * D;
-    const len_sq = C * C + D * D;
-    let param = -1;
-
-    if (len_sq != 0) param = dot / len_sq;
-
-    let xx, yy;
-
-    if (param < 0) {
-      xx = x1;
-      yy = y1;
-    } else if (param > 1) {
-      xx = x2;
-      yy = y2;
-    } else {
-      xx = x1 + param * C;
-      yy = y1 + param * D;
-    }
-
-    const dx = px - xx;
-    const dy = py - yy;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
   endGame(success, reason = "") {
     this.isGameActive = false;
     const modal = document.getElementById("modal");
@@ -481,25 +451,25 @@ class Game {
       -SPACECRAFT_HEIGHT * this.scale * 0.2,
       -SPACECRAFT_HEIGHT * this.scale * 0.4,
       SPACECRAFT_HEIGHT * this.scale * 0.4,
-      SPACECRAFT_HEIGHT * this.scale * 0.8
+      SPACECRAFT_HEIGHT * this.scale * 0.6
     );
 
     // Landing legs
     this.ctx.beginPath();
     const legSpread = SPACECRAFT_HEIGHT * this.scale * 0.3;
     this.ctx.moveTo(-legSpread, SPACECRAFT_HEIGHT * this.scale * 0.4);
-    this.ctx.lineTo(0, SPACECRAFT_HEIGHT * this.scale * 0.2);
+    this.ctx.lineTo(0, SPACECRAFT_HEIGHT * this.scale * -0.2);
     this.ctx.lineTo(legSpread, SPACECRAFT_HEIGHT * this.scale * 0.4);
     this.ctx.strokeStyle = "white";
-    this.ctx.lineWidth = 2;
+    this.ctx.lineWidth = 3;
     this.ctx.stroke();
 
     // Draw thrust if firing
     if (this.keys.ArrowUp && this.spacecraft.fuel > 0) {
       this.ctx.beginPath();
-      this.ctx.moveTo(0, SPACECRAFT_HEIGHT * this.scale * 0.4);
-      this.ctx.lineTo(-5, SPACECRAFT_HEIGHT * this.scale * 0.6);
-      this.ctx.lineTo(5, SPACECRAFT_HEIGHT * this.scale * 0.6);
+      this.ctx.moveTo(0, SPACECRAFT_HEIGHT * this.scale * 0.2);
+      this.ctx.lineTo(-5, SPACECRAFT_HEIGHT * this.scale * 1.0);
+      this.ctx.lineTo(5, SPACECRAFT_HEIGHT * this.scale * 1.0);
       this.ctx.closePath();
       this.ctx.fillStyle = "orange";
       this.ctx.fill();
