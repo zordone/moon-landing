@@ -277,8 +277,40 @@ class Game {
       this.spacecraft.velocityX * this.spacecraft.velocityX +
         this.spacecraft.velocityY * this.spacecraft.velocityY
     );
+
+    // Calculate angle to moon center (where 0 means pointing towards center)
+    const angleToCenter =
+      (Math.atan2(
+        this.moonCenter.y - this.spacecraft.y,
+        this.moonCenter.x - this.spacecraft.x
+      ) *
+        180) /
+      Math.PI;
+
+    // Convert spacecraft rotation to be relative to angleToCenter
+    // Add 90 because spacecraft is drawn pointing upward at 0 degrees
+    const relativeRotation =
+      (this.spacecraft.rotation + 90 - angleToCenter) % 360;
+
+    // Normalize to -180 to 180 range
+    const normalizedRotation =
+      relativeRotation > 180
+        ? relativeRotation - 360
+        : relativeRotation < -180
+        ? relativeRotation + 360
+        : relativeRotation;
+
     const isUprightLanding =
-      Math.abs(this.spacecraft.rotation) <= ACCEPTABLE_LANDING_ANGLE;
+      Math.abs(normalizedRotation) <= ACCEPTABLE_LANDING_ANGLE;
+
+    // Debug logging
+    console.log(
+      `Angle debug:`,
+      `\n Expected: ${-ACCEPTABLE_LANDING_ANGLE}° to ${ACCEPTABLE_LANDING_ANGLE}°`,
+      `\n Actual rotation: ${normalizedRotation.toFixed(1)}°`,
+      `\n Is upright: ${isUprightLanding}`
+    );
+
     const isSoftLanding = speed <= ACCEPTABLE_LANDING_SPEED;
 
     if (isInLandingZone && isUprightLanding && isSoftLanding) {
