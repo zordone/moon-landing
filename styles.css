@@ -1,0 +1,88 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background: black;
+  font-family: monospace;
+}
+
+#gameCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#dashboard {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: lime;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border: 1px solid lime;
+  border-radius: 5px;
+  font-size: 14px;
+  min-width: 230px;
+}
+
+#dashboard div {
+  margin: 5px 0;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: black;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.hidden {
+  _display: none;
+  visibility: hidden;
+}
+
+.modal-content {
+  font-size: 18px;
+}
+
+#modal.success {
+  border: 2px solid lime;
+  color: lime;
+}
+
+#modal.failure {
+  border: 2px solid red;
+  color: red;
+}
+
+#tryAgain {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-family: monospace;
+  margin-top: 15px;
+  font-size: 16px;
+}
+
+#tryAgain:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+#countdown {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000c;
+  color: white;
+  font-size: 72px;
+  font-family: monospace;
+}
