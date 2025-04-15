@@ -4,7 +4,7 @@ const MOON_GRAVITY = 1.62; // m/s²
 const MOON_BUMPINESS = 0.015; // bumpiness of the moon surface
 const MOON_SEGMENTS = 250; // how many line segments to draw the moon
 const MOON_ROTATION_SPEED = 0.02; // rotations per minute
-const SPACECRAFT_HEIGHT = 8; // meters
+const SPACECRAFT_HEIGHT = 9; // meters
 const LANDING_ZONE_SPREAD = 5; // segments
 const THRUST_FORCE = 4; // m/s²
 const FUEL_CONSUMPTION = 4; // %/s
@@ -263,8 +263,8 @@ class Game {
     );
 
     // Create spacecraft bounding box vertices
-    const halfWidth = SPACECRAFT_HEIGHT * this.scale * 0.2; // Half the spacecraft width
-    const halfHeight = SPACECRAFT_HEIGHT * this.scale * 0.4; // Half the spacecraft height
+    const halfWidth = SPACECRAFT_HEIGHT * this.scale * 0.2;
+    const halfHeight = SPACECRAFT_HEIGHT * this.scale * 0.4;
     const angle = (this.spacecraft.rotation * Math.PI) / 180;
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
@@ -527,7 +527,7 @@ class Game {
     this.ctx.rotate((this.spacecraft.rotation * Math.PI) / 180);
 
     // Main body
-    this.ctx.fillStyle = "white";
+    this.ctx.fillStyle = "bisque";
     this.ctx.fillRect(
       -SPACECRAFT_HEIGHT * this.scale * 0.2,
       -SPACECRAFT_HEIGHT * this.scale * 0.4,
@@ -541,9 +541,32 @@ class Game {
     this.ctx.moveTo(-legSpread, SPACECRAFT_HEIGHT * this.scale * 0.4);
     this.ctx.lineTo(0, SPACECRAFT_HEIGHT * this.scale * -0.2);
     this.ctx.lineTo(legSpread, SPACECRAFT_HEIGHT * this.scale * 0.4);
-    this.ctx.strokeStyle = "white";
-    this.ctx.lineWidth = 3;
+    this.ctx.strokeStyle = "bisque";
+    this.ctx.lineWidth = 4;
     this.ctx.stroke();
+
+    // Flag
+    this.ctx.fillStyle = "#CE2939";
+    this.ctx.fillRect(
+      -SPACECRAFT_HEIGHT * this.scale * 0.15,
+      -SPACECRAFT_HEIGHT * this.scale * 0.23,
+      SPACECRAFT_HEIGHT * this.scale * 0.3,
+      SPACECRAFT_HEIGHT * this.scale * 0.08
+    );
+    this.ctx.fillStyle = "#FFFFFF";
+    this.ctx.fillRect(
+      -SPACECRAFT_HEIGHT * this.scale * 0.15,
+      -SPACECRAFT_HEIGHT * this.scale * 0.14,
+      SPACECRAFT_HEIGHT * this.scale * 0.3,
+      SPACECRAFT_HEIGHT * this.scale * 0.08
+    );
+    this.ctx.fillStyle = "#477050";
+    this.ctx.fillRect(
+      -SPACECRAFT_HEIGHT * this.scale * 0.15,
+      -SPACECRAFT_HEIGHT * this.scale * 0.06,
+      SPACECRAFT_HEIGHT * this.scale * 0.3,
+      SPACECRAFT_HEIGHT * this.scale * 0.08
+    );
 
     // Draw thrust if firing
     if (

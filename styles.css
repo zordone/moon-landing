@@ -42,6 +42,14 @@ body {
   margin-left: auto;
 }
 
+.modal.success {
+  --color: lime;
+}
+
+.modal.failure {
+  --color: red;
+}
+
 .modal {
   position: fixed;
   top: 50%;
@@ -52,15 +60,18 @@ body {
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 0 30px #000;
+  border: 1px solid var(--color);
+  color: var(--color);
 }
 
 .modal button {
   border-radius: 10px;
+  color: var(--color);
 }
 
 .modal button:focus-visible {
   outline: none;
-  box-shadow: inset 0 0 5px 2px currentColor;
+  box-shadow: inset 0 0 0 4px var(--color);
 }
 
 .hidden {
@@ -72,20 +83,9 @@ body {
   text-wrap-style: balance;
 }
 
-#modal.success {
-  color: lime;
-  border: 1px solid currentColor;
-}
-
-#modal.failure {
-  color: red;
-  border: 1px solid currentColor;
-}
-
 #tryAgain {
   background: transparent;
-  border: 1px solid currentColor;
-  color: inherit;
+  border: 1px solid var(--color);
   padding: 10px 20px;
   cursor: pointer;
   margin-top: 15px;
@@ -93,7 +93,8 @@ body {
 }
 
 #tryAgain:hover {
-  background: color-mix(in srgb, currentColor, transparent 80%);
+  background: var(--color);
+  color: #000;
 }
 
 #countdown {
