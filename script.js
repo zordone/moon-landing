@@ -7,23 +7,46 @@ const MOON_ROTATION_SPEED = 0.02 / 60; // rotations per second
 const SPACECRAFT_HEIGHT = 6; // meters
 const LANDING_ZONE_SPREAD = 5; // segments
 const THRUST_FORCE = 4; // m/s²
-const FUEL_CONSUMPTION = 0.5; // %/s
+const FUEL_CONSUMPTION = 1; // %/s
 const ROTATION_SPEED = 20; // degrees/s
 const ACCEPTABLE_LANDING_ANGLE = 4; // degrees
 const ACCEPTABLE_LANDING_SPEED = 2.5; // m/s
 
 // Game messages
-const SUCCESS_MESSAGES = [
-  "Houston, the Eagle has landed!",
-  "One small step for a lander, one giant leap for your piloting skills!",
-  "Mission accomplished! NASA would be proud!",
-];
-
-const FAILURE_MESSAGES = [
-  "Houston, we have a problem...",
-  "That's not flying, that's falling with style!",
-  "Ground control to Major Tom: You've really made a mess...",
-];
+const MESSAGES = {
+  success: [
+    "Houston, the Eagle has landed!",
+    "One small step for a lander, one giant leap for your piloting skills!",
+    "Mission accomplished! NASA would be proud!",
+    "You nailed it! Time to plant that flag!",
+    "Congratulations! You just made Neil Armstrong proud!",
+    "Lunar landing successful! Now, where's the moon cheese?",
+  ],
+  missedZone: [
+    "Navigation error: That's not the landing zone!",
+    "Ground control suggests using your eyes next time.",
+    "You boldly went where no one should have gone.",
+    "Houston, we have a navigation problem.",
+    "You missed the landing zone by a mile!",
+    "Your landing zone was more of a suggestion.",
+  ],
+  notUpright: [
+    "Houston, we have a problem: you're not upright!",
+    "Your spacecraft is more of a tumbleweed right now.",
+    "You might want to check your landing gear alignment.",
+    "Do a barrel roll! ...Actually, don't.",
+    "Astronauts prefer their spacecraft right-side up.",
+    "You're a bit tilted. The spacecraft shouldn't be!",
+  ],
+  tooFast: [
+    "Whoa there! You're going faster than a meteor!",
+    "Speed limit: 2.5 m/s. You just broke it!",
+    "Your spacecraft is in freefall, not flying!",
+    "That's not flying, that's falling with style!",
+    "Speed kills, especially on the moon!",
+    "Slow and steady wins the space race.",
+  ],
+};
 
 class Game {
   constructor() {
@@ -34,7 +57,7 @@ class Game {
 
     // Game state
     this.isGameActive = false;
-    this.isPaused = true; // Add new state for countdown pause
+    this.isPaused = true;
     this.moonPoints = [];
     this.landingZoneIndex = 0;
     this.moonRotation = 0;
@@ -259,12 +282,12 @@ class Game {
     const isSoftLanding = speed <= ACCEPTABLE_LANDING_SPEED;
 
     if (isInLandingZone && isUprightLanding && isSoftLanding) {
-      this.endGame(true);
+      this.endGame(true, "success");
     } else {
       let reason = "";
-      if (!isInLandingZone) reason = "Missed the landing zone!";
-      else if (!isUprightLanding) reason = "Not upright!";
-      else reason = "Too fast!";
+      if (!isInLandingZone) reason = "missedZone";
+      else if (!isUprightLanding) reason = "notUpright";
+      else reason = "tooFast";
       this.endGame(false, reason);
     }
   }
@@ -306,9 +329,10 @@ class Game {
     const modalText = document.getElementById("modal-text");
 
     modal.className = success ? "modal success" : "modal failure";
-    const messages = success ? SUCCESS_MESSAGES : FAILURE_MESSAGES;
+
+    const messages = MESSAGES[reason];
     const message = messages[Math.floor(Math.random() * messages.length)];
-    modalText.textContent = message + (reason ? `\n${reason}` : "");
+    modalText.textContent = message;
 
     modal.classList.remove("hidden");
     document.getElementById("tryAgain").focus();
