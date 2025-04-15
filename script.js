@@ -224,51 +224,72 @@ class Game {
       this.rotatePoint(point, this.moonCenter, this.moonRotation)
     );
 
-    // Get spacecraft's collision point (bottom center of spacecraft)
-    const spacecraftBottom = {
-      x: this.spacecraft.x,
-      y: this.spacecraft.y + SPACECRAFT_HEIGHT * this.scale * 0.5,
-    };
+    // Create spacecraft bounding box vertices
+    const halfWidth = SPACECRAFT_HEIGHT * this.scale * 0.2; // Half the spacecraft width
+    const halfHeight = SPACECRAFT_HEIGHT * this.scale * 0.4; // Half the spacecraft height
+    const angle = (this.spacecraft.rotation * Math.PI) / 180;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
 
-    // Check if spacecraft is inside moon (closer to center than surface)
-    const distanceToCenter = Math.sqrt(
-      Math.pow(spacecraftBottom.x - this.moonCenter.x, 2) +
-        Math.pow(spacecraftBottom.y - this.moonCenter.y, 2)
-    );
+    // Calculate the four corners of the rotated bounding box
+    const corners = [
+      {
+        // Top Left
+        x: this.spacecraft.x + (-halfWidth * cos - halfHeight * sin),
+        y: this.spacecraft.y + (-halfWidth * sin + halfHeight * cos),
+      },
+      {
+        // Top Right
+        x: this.spacecraft.x + (halfWidth * cos - halfHeight * sin),
+        y: this.spacecraft.y + (halfWidth * sin + halfHeight * cos),
+      },
+      {
+        // Bottom Right
+        x: this.spacecraft.x + (halfWidth * cos + halfHeight * sin),
+        y: this.spacecraft.y + (halfWidth * sin - halfHeight * cos),
+      },
+      {
+        // Bottom Left
+        x: this.spacecraft.x + (-halfWidth * cos + halfHeight * sin),
+        y: this.spacecraft.y + (-halfWidth * sin - halfHeight * cos),
+      },
+    ];
 
-    // Find closest surface point
-    let minDistance = Infinity;
+    // Check each side of the spacecraft against each moon surface segment
+    let collision = false;
     let closestSegmentIndex = -1;
+
     for (let i = 0; i < rotatedPoints.length - 1; i++) {
-      const p1 = rotatedPoints[i];
-      const p2 = rotatedPoints[i + 1];
+      const moonP1 = rotatedPoints[i];
+      const moonP2 = rotatedPoints[i + 1];
 
-      // Calculate distance to line segment
-      const distance = this.distanceToLineSegment(
-        spacecraftBottom.x,
-        spacecraftBottom.y,
-        p1.x,
-        p1.y,
-        p2.x,
-        p2.y
-      );
+      // Check each side of the spacecraft
+      for (let j = 0; j < 4; j++) {
+        const spacecraftP1 = corners[j];
+        const spacecraftP2 = corners[(j + 1) % 4];
 
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestSegmentIndex = i;
+        if (
+          this.lineSegmentsIntersect(
+            spacecraftP1.x,
+            spacecraftP1.y,
+            spacecraftP2.x,
+            spacecraftP2.y,
+            moonP1.x,
+            moonP1.y,
+            moonP2.x,
+            moonP2.y
+          )
+        ) {
+          collision = true;
+          closestSegmentIndex = i;
+          break;
+        }
       }
+
+      if (collision) break;
     }
 
-    // Check if we're actually colliding and it's not just close
-    const surfacePoint = rotatedPoints[closestSegmentIndex];
-    const surfaceDistance = Math.sqrt(
-      Math.pow(surfacePoint.x - this.moonCenter.x, 2) +
-        Math.pow(surfacePoint.y - this.moonCenter.y, 2)
-    );
-
-    if (distanceToCenter >= surfaceDistance) {
-      return; // No collision
-    }
+    if (!collision) return;
 
     // We have a collision, check landing conditions
     const isInLandingZone =
@@ -322,6 +343,28 @@ class Game {
       else reason = "tooFast";
       this.endGame(false, reason);
     }
+  }
+
+  // Helper function to check if two line segments intersect
+  lineSegmentsIntersect(x1, y1, x2, y2, x3, y3, x4, y4) {
+    // Calculate the direction vectors
+    const dx1 = x2 - x1;
+    const dy1 = y2 - y1;
+    const dx2 = x4 - x3;
+    const dy2 = y4 - y3;
+
+    // Calculate the denominator
+    const denominator = dx1 * dy2 - dy1 * dx2;
+
+    // If lines are parallel, they don't intersect
+    if (denominator === 0) return false;
+
+    // Calculate parameters for both lines
+    const t1 = ((x3 - x1) * dy2 - (y3 - y1) * dx2) / denominator;
+    const t2 = ((x3 - x1) * dy1 - (y3 - y1) * dx1) / denominator;
+
+    // Check if intersection point lies within both line segments
+    return t1 >= 0 && t1 <= 1 && t2 >= 0 && t2 <= 1;
   }
 
   distanceToLineSegment(px, py, x1, y1, x2, y2) {
